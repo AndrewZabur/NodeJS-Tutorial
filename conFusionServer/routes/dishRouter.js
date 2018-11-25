@@ -45,12 +45,12 @@ dishRouter.route('/')
 dishRouter.route('/:dishId')
 .get((req, res, next) => {
     Dishes.findById(req.params.dishId)
-    .then((dish) => {
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'application/json');
-        res.json(dish);
-    }, (err) => next(err))
-    .catch((err) => next(err));
+        .then((dish) => {
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            res.json(dish);
+        }, (err) => next(err))
+        .catch((err) => next(err));
 })
 .post((req, res, next) => {
     res.statusCode = 403;
