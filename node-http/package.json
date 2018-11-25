@@ -8,8 +8,5 @@
     "start": "node index"
   },
   "author": "Andrew Zabur",
-  "license": "ISC",
-  "dependencies": {
-    "kill-all-node-on-windows": "0.0.4"
-  }
+  "license": "ISC"
 }
