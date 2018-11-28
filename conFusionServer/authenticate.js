@@ -6,6 +6,7 @@ var ExtractJwt = require('passport-jwt').ExtractJwt;
 var jwt = require('jsonwebtoken'); 
 
 var config = require('./config.js');
+const Dishes = require('./models/dishes');
 
 exports.local = passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
@@ -35,3 +36,38 @@ exports.jwtPassport = passport.use(new JwtStrategy(opts,
     }));
 
 exports.verifyUser = passport.authenticate('jwt', {session: false});
+
+exports.verifyAdmin = (req, res, next) => {
+    if (req.user.admin === true) {
+        next();
+    } else {
+        var err = new Error('You are not authorized to perform this operation!');
+        return next(err);
+    }
+}
+
+exports.verifyCommentDeeds = (req, res, next) => {
+    Dishes.findById(req.params.dishId)
+    .populate('comments.author')
+    .then((dish) => {
+        if (dish != null && dish.comments.id(req.params.commentId) != null) {
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            if (req.user._id.equals(dish.comments.id(req.params.commentId).author._id)) {
+                next();
+            } else {
+                var err = new Error('You are not authorized to perform this operation!');
+                return next(err);
+            }
+        } else if (dish == null) {
+            err = new Error('Dish ' + req.params.dishId + ' not found') ;
+            err.status = 404;
+            return next(err);
+        } else {
+            err = new Error('Comment ' + req.params.commentId + ' not found') ;
+            err.status = 404;
+            return next(err);
+        }
+    }, (err) => next(err))
+    .catch((err) => next(err));    
+}
