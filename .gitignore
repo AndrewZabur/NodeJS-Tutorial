@@ -1,2 +1,5 @@
 node_modules
 db.json
+cert.csr
+certificate.pem
+private.key
